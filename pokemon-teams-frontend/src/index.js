@@ -48,9 +48,16 @@ function pokeRelease(event) {
 	let deleteConfig = {
         method: 'DELETE'
     }
+    let currentpokemon = event.target.parentElement
     
     fetch(POKEMONS_URL + `/${pokeId}`, deleteConfig)
-    	.then((response) => console.log(response))
+    	.then((response) => response.json())
+    	.then((jso) => {
+    		console.log(jso)
+    		currentpokemon.remove()
+    		}
+    	)
+    	.catch((response) => console.log("Error:", response))
 
 
 }
