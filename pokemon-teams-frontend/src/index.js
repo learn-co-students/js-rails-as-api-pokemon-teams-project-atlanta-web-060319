@@ -29,7 +29,7 @@ function setUpTrainers(trainerArr) {
 		div.innerHTML = `<p>${trainer.name}</p>
 						 <form class="add-pokemon-${trainer.id}" data-trainer-id="${trainer.id}" action="${POKEMONS_URL}" method="post">
 						 	Species:<input type="text" name="species"> </br>
-						 	Nickname: <input type="text" name="nickname"> </br>
+						 	Nickname: <input type="text" name="nickname">
 						 	<input type="hidden" name="trainer_id" value=${trainer.id}>
 						 	<input type="submit" value="Add Pokemon">
 						 </form>`
@@ -42,25 +42,34 @@ function setUpTrainers(trainerArr) {
 
 function handleAddPoke(event) {
 	event.preventDefault()
+	let futureLisCount = event.target.parentNode.querySelectorAll("ul li").length + 1
 
-	let pokeSubmit = {
+	if (futureLisCount <= 6) {
+		let pokeSubmit = {
 					  species: event.target[0].value,
 					  nickname: event.target[1].value,
 					  trainer_id: event.target[2].value
+		}
+
+		let addPokeRequestConfig = {
+							        method: 'POST',
+							        headers: {
+									          'Content-Type': 'application/json',
+									          "Accept": "application/json"
+							        },
+						    	    body: JSON.stringify(pokeSubmit)
+		}
+
+		fetch(POKEMONS_URL, addPokeRequestConfig)
+		.then((response) => response.json())
+		.then((jso) => setUp1Pokemon(jso.pokemon))
+		.then(() => event.target.reset())
+	}
+	else {
+		event.target.reset()
+		console.log("Too many pokemons")
 	}
 
-	let addPokeRequestConfig = {
-						        method: 'POST',
-						        headers: {
-								          'Content-Type': 'application/json',
-								          "Accept": "application/json"
-						        },
-						        body: JSON.stringify(pokeSubmit)
-	}
-
-	fetch(POKEMONS_URL, addPokeRequestConfig)
-	.then((response) => response.json())
-	.then((jso) => setUp1Pokemon(jso.pokemon))
 }
 
 function setUpPokemons(trainerArr) {
